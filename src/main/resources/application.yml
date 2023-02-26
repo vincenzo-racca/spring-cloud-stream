@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: spring-cloud-stream
+  cloud:
+    function:
+      definition: logEventReceived|saveInDBEventReceived;sensorEventAnotherProducer
+    stream:
+      kafka:
+        binder:
+          brokers: localhost:9092
+          consumerProperties:
+            max.poll.records: 250
+      bindings:
+        logEventReceivedSaveInDBEventReceived-in-0: #a consumer
+          destination: sensor_event_topic
+          group: ${spring.application.name}
+        sensorEventMessageProducer-out-0: #a producer
+          destination: sensor_event_topic
+        sensorEventAnotherProducer-out-0: #another producer
+          destination: sensor_event_topic

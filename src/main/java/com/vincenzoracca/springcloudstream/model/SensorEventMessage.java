@@ -5,6 +5,6 @@ import java.time.Instant;
 public record SensorEventMessage(
         String sensorId,
         Instant timestampEvent,
-        Double degree
+        Double degrees
 )
 {}

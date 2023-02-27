@@ -18,14 +18,12 @@ import java.util.function.Supplier;
 public class SensorEventImperativeFunctions {
 
 //    @Bean
-    public Supplier<SensorEventMessage> sensorEventAnotherProducer() {
+    public Supplier<SensorEventMessage> sensorEventProducer() {
         return () -> new SensorEventMessage("2", Instant.now(), 30.0);
     }
 
 //    @Bean
-    public Consumer<SensorEventMessage> sensorEventMessageConsumer() {
-        return sensorEventMessage -> {
-            log.info("Message received: {}", sensorEventMessage);
-        };
+    public Consumer<SensorEventMessage> logEventReceived() {
+        return sensorEventMessage -> log.info("Message received: {}", sensorEventMessage);
     }
 }

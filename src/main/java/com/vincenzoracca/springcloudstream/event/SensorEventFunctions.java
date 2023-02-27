@@ -11,7 +11,6 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.time.Instant;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -37,20 +36,9 @@ public class SensorEventFunctions {
                 .then();
     }
 
-    // for the reactive consumers, you can use Consumer<Flux<..>> or Function<Flux<..>, Mono<Void>>
-//    @Bean
-//    public Consumer<Flux<SensorEventMessage>> logEventReceived() {
-//        return fluxEvent -> {
-//            fluxEvent
-//                    .doOnNext(sensorEventMessage -> log.info("Message received: {}", sensorEventMessage))
-//                    .subscribe();
-//
-//        };
-//    }
-
-//    @PollableBean
+    //    @PollableBean
     @Bean
-    public Supplier<Flux<SensorEventMessage>> sensorEventAnotherProducer() {
+    public Supplier<Flux<SensorEventMessage>> sensorEventProducer() {
         return () -> Flux.fromStream(Stream.generate(() -> {
             try {
                 Thread.sleep(5000);
@@ -62,21 +50,14 @@ public class SensorEventFunctions {
         })).subscribeOn(Schedulers.boundedElastic()).share();
     }
 
-
-// IMPERATIVE MODE
-
+    // for the reactive consumers, you can use Consumer<Flux<..>> or Function<Flux<..>, Mono<Void>>
 //    @Bean
-//    public Supplier<SensorEventMessage> sensorEventAnotherProducer() {
-//        return () -> {
-//            SensorEventMessage sensorEventMessage = new SensorEventMessage("2", Instant.now(), 30.0);
-//            return sensorEventMessage;
-//        };
-//    }
-
-//    @Bean
-//    public Consumer<SensorEventMessage> sensorEventMessageConsumer() {
-//        return sensorEventMessage -> {
-//            log.info("Message received: {}", sensorEventMessage);
+//    public Consumer<Flux<SensorEventMessage>> logEventReceived() {
+//        return fluxEvent -> {
+//            fluxEvent
+//                    .doOnNext(sensorEventMessage -> log.info("Message received: {}", sensorEventMessage))
+//                    .subscribe();
+//
 //        };
 //    }
 

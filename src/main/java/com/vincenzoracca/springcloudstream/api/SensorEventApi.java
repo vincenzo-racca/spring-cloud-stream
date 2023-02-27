@@ -21,7 +21,7 @@ public class SensorEventApi {
     @PostMapping
     public Mono<ResponseEntity<Boolean>> sendDate(@RequestBody Mono<SensorEventMessage> sensorEventMessage) {
         return sensorEventMessage
-                .map(message -> streamBridge.send("sensorEventMessageProducer-out-0", message))
+                .map(message -> streamBridge.send("sensorEventAnotherProducer-out-0", message))
                 .map(ResponseEntity::ok);
 
     }

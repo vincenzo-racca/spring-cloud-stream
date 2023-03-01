@@ -1,8 +1,8 @@
 package com.vincenzoracca.springcloudstream.api;
 
+import com.vincenzoracca.springcloudstream.event.ProducerSensorEvent;
 import com.vincenzoracca.springcloudstream.model.SensorEventMessage;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,13 +15,13 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class SensorEventApi {
 
-    private final StreamBridge streamBridge;
+    private final ProducerSensorEvent producerSensorEvent;
 
 
     @PostMapping
     public Mono<ResponseEntity<Boolean>> sendDate(@RequestBody Mono<SensorEventMessage> sensorEventMessage) {
         return sensorEventMessage
-                .map(message -> streamBridge.send("sensorEventAnotherProducer-out-0", message))
+                .map(producerSensorEvent::publishMessage)
                 .map(ResponseEntity::ok);
 
     }

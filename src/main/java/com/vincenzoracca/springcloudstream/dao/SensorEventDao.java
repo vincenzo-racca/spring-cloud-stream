@@ -7,5 +7,5 @@ import reactor.core.publisher.Mono;
 public interface SensorEventDao {
 
     Flux<SensorEventMessage> findAll();
-    Mono<Void> save(Mono<SensorEventMessage> sensorEventMessageMono);
+    Mono<SensorEventMessage> save(Mono<SensorEventMessage> sensorEventMessageMono);
 }

@@ -19,11 +19,10 @@ public class SensorEventInMemoryDao implements SensorEventDao {
         return Flux.fromIterable(memoryDB.values());
     }
 
-    public Mono<Void> save(Mono<SensorEventMessage> sensorEventMessageMono) {
+    public Mono<SensorEventMessage> save(Mono<SensorEventMessage> sensorEventMessageMono) {
         return sensorEventMessageMono
                 .doOnNext(sensorEventMessage -> memoryDB.put(sensorEventMessage.sensorId(), sensorEventMessage))
-                .doOnNext(sensorEventMessage -> log.info("Message saved with id: {}", sensorEventMessage.sensorId()))
-                .then();
+                .doOnNext(sensorEventMessage -> log.info("Message saved with id: {}", sensorEventMessage.sensorId()));
     }
 
 }

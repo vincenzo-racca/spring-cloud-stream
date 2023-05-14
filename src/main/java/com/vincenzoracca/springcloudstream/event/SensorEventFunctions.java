@@ -20,7 +20,11 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class SensorEventFunctions {
 
+    private static final String DLQ_CHANNEL = "sensorEventDlqProducer-out-0";
+
     private final SensorEventDao sensorEventDao;
+
+    private final DlqEventUtil dlqEventUtil;
 
     @Bean
     public Function<Flux<SensorEventMessage>, Flux<SensorEventMessage>> logEventReceived() {
@@ -31,8 +35,18 @@ public class SensorEventFunctions {
     @Bean
     public Function<Flux<SensorEventMessage>, Mono<Void>> saveInDBEventReceived() {
         return fluxEvent -> fluxEvent
-                .doOnNext(sensorEventMessage -> log.info("Message saving: {}", sensorEventMessage))
-                .flatMap(sensorEventMessage -> sensorEventDao.save(Mono.just(sensorEventMessage)))
+                // to manage DLQ, you can wrap the flow in a flatMap
+                .flatMap(sensorEventMessage -> {
+                    log.info("Message saving: {}", sensorEventMessage);
+                    return sensorEventDao.save(Mono.just(sensorEventMessage))
+                            .map(sensorEventMessage1 -> {
+                                if(sensorEventMessage.degrees() == 10.0) throw new RuntimeException("Error in saveMessage");
+                                return sensorEventMessage1;
+                            })
+                            .onErrorResume(throwable -> dlqEventUtil.handleDLQ(sensorEventMessage, throwable, DLQ_CHANNEL));
+                })
+//                .doOnNext(sensorEventMessage -> log.info("Message saving: {}", sensorEventMessage))
+//                .flatMap(sensorEventMessage -> sensorEventDao.save(Mono.just(sensorEventMessage)))
                 .then();
     }
 

@@ -21,3 +21,5 @@ spring:
           destination: sensor_event_topic
         sensorEventAnotherProducer-out-0: #another producer
           destination: sensor_event_topic
+        sensorEventDlqProducer-out-0: #DLQ producer
+          destination: sensor_event_topic_dlq

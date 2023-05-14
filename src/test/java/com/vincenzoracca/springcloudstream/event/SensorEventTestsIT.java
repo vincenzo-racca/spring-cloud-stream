@@ -40,7 +40,7 @@ class SensorEventTestsIT {
 
 
     @Test
-    public void produceSyncMessageTest() throws IOException {
+    void produceSyncMessageTest() throws IOException {
         SensorEventMessage sensorEventMessage = new SensorEventMessage("3", Instant.now(), 15.0);
         producerSensorEvent.publishMessage(sensorEventMessage);
         byte[] payloadBytesReceived = output.receive(100L, "sensor_event_topic").getPayload();
@@ -48,7 +48,7 @@ class SensorEventTestsIT {
     }
 
     @Test
-    public void producePollableMessageTest() throws IOException {
+    void producePollableMessageTest() throws IOException {
         byte[] payloadBytesReceived = output.receive(5000L, "sensor_event_topic").getPayload();
         SensorEventMessage sensorEventMessageReceived = objectMapper.readValue(payloadBytesReceived, SensorEventMessage.class);
         assertThat(sensorEventMessageReceived.sensorId()).isEqualTo("2");
@@ -57,7 +57,7 @@ class SensorEventTestsIT {
 
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     @Test
-    public void consumeMessageTest() throws IOException {
+    void consumeMessageTest() throws IOException {
 //        sensorEventDao.clear().subscribe();
         SensorEventMessage sensorEventMessage = new SensorEventMessage("3", Instant.now(), 15.0);
         byte[] payloadBytesSend = objectMapper.writeValueAsBytes(sensorEventMessage);

@@ -4,6 +4,7 @@ import com.vincenzoracca.springcloudstream.dao.SensorEventDao;
 import com.vincenzoracca.springcloudstream.model.SensorEventMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import reactor.core.publisher.Flux;
@@ -36,18 +37,21 @@ public class SensorEventFunctions {
     public Function<Flux<SensorEventMessage>, Mono<Void>> saveInDBEventReceived() {
         return fluxEvent -> fluxEvent
                 // to manage DLQ, you can wrap the flow in a flatMap
-                .flatMap(sensorEventMessage -> {
-                    log.info("Message saving: {}", sensorEventMessage);
-                    return sensorEventDao.save(Mono.just(sensorEventMessage))
-                            .map(sensorEventMessage1 -> {
-                                if(sensorEventMessage.degrees() == 10.0) throw new RuntimeException("Error in saveMessage");
-                                return sensorEventMessage1;
-                            })
-                            .onErrorResume(throwable -> dlqEventUtil.handleDLQ(sensorEventMessage, throwable, DLQ_CHANNEL));
-                })
+                .flatMap(this::consumeMessage)
 //                .doOnNext(sensorEventMessage -> log.info("Message saving: {}", sensorEventMessage))
 //                .flatMap(sensorEventMessage -> sensorEventDao.save(Mono.just(sensorEventMessage)))
                 .then();
+    }
+
+    @NotNull
+    private Mono<SensorEventMessage> consumeMessage(SensorEventMessage sensorEventMessage) {
+        log.info("Message saving: {}", sensorEventMessage);
+        return sensorEventDao.save(Mono.just(sensorEventMessage))
+                .map(sensorEventMessage1 -> {
+                    if (sensorEventMessage.degrees() == 10.0) throw new RuntimeException("Error in saveMessage");
+                    return sensorEventMessage1;
+                })
+                .onErrorResume(throwable -> dlqEventUtil.handleDLQ(sensorEventMessage, throwable, DLQ_CHANNEL));
     }
 
     //    @PollableBean

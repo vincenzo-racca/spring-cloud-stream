@@ -27,6 +27,8 @@ spring:
         logEventReceivedSaveInDBEventReceived-in-0: #a consumer
           destination: sensor_event_topic
           group: ${spring.application.name}
+#          consumer:
+#            max-attempts: 3 #default is 3
         sensorEventProducer-out-0: #a producer
           destination: sensor_event_topic
         sensorEventAnotherProducer-out-0: #another producer

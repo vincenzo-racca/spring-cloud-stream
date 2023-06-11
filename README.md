@@ -17,9 +17,10 @@ in the SensorEventImperativeFunctions, I show you the same flow in the imperativ
 
 ## Run the project
 
-You can run a local kafka cluster by the docker-compose.yml in the project. \
-From the root of project, run: `docker compose up -d`.
-Then, you can run the application with your IDE or with command: `./mvnw spring-boot:run`
+There is a `docker-compose.yml` file in the root of project to run Zookeeper and Kafka containers. \
+With Spring Boot 3.1, we have the docker compose support out of box (adding the **spring-boot-docker-compose** dependency).
+So, you can just run the application with your IDE or with command: `./mvnw spring-boot:run`, and Spring will execute
+the docker compose in docker-compose.yml file and then the application.
 
 There is an automatic producer that send the date every 5 seconds (the sensorEventAnotherProducer producer).
 

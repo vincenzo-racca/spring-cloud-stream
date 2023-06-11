@@ -12,6 +12,7 @@ import org.springframework.cloud.stream.binder.test.TestChannelBinderConfigurati
 import org.springframework.context.annotation.Import;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import reactor.test.StepVerifier;
 
 import java.io.IOException;
@@ -20,8 +21,9 @@ import java.time.Instant;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@ActiveProfiles("reactive")
 @Import(TestChannelBinderConfiguration.class)
-class SensorEventTestsIT {
+class SensorEventFunctionsTestsIT {
 
     @Autowired
     private InputDestination input;
@@ -58,7 +60,6 @@ class SensorEventTestsIT {
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     @Test
     void consumeMessageTest() throws IOException {
-//        sensorEventDao.clear().subscribe();
         SensorEventMessage sensorEventMessage = new SensorEventMessage("3", Instant.now(), 15.0);
         byte[] payloadBytesSend = objectMapper.writeValueAsBytes(sensorEventMessage);
         input.send(new GenericMessage<>(payloadBytesSend), "sensor_event_topic");
@@ -73,7 +74,6 @@ class SensorEventTestsIT {
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     @Test
     void consumeDLQMessageTest() throws IOException {
-//        sensorEventDao.clear().subscribe();
         SensorEventMessage sensorEventMessage = new SensorEventMessage("3", Instant.now(), 10.0);
         byte[] payloadBytesSend = objectMapper.writeValueAsBytes(sensorEventMessage);
         input.send(new GenericMessage<>(payloadBytesSend), "sensor_event_topic");

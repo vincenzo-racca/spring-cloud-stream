@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: spring-cloud-stream
+  integration:
+    poller: #manage polling for supplier producer
+      fixed-delay: 5000
+      initial-delay: 1000
+  cloud:
+    function:
+      definition: logEventReceivedSaveInDBEventReceived;sensorEventProducer
+    stream:
+      kafka:
+        binder:
+          brokers: localhost:9092
+          #          kafka-properties: global props
+          #            boootstrap.server: localhost:9092
+          consumerProperties: #consumer props
+            max.poll.records: 250
+        bindings:
+          logEventReceivedSaveInDBEventReceived-in-0:
+            consumer:
+              enable-dlq: true
+              dlq-name: sensor_event_topic_dlq
+      #          producerProperties:
+      #            boootstrap.server: localhost:9092
+      bindings:
+        logEventReceivedSaveInDBEventReceived-in-0: #a consumer
+          destination: sensor_event_topic
+          group: ${spring.application.name}
+        sensorEventProducer-out-0: #a producer
+          destination: sensor_event_topic
+        sensorEventAnotherProducer-out-0: #another producer
+          destination: sensor_event_topic

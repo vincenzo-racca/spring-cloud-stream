@@ -7,7 +7,7 @@ spring:
       initial-delay: 1000
   cloud:
     function:
-      definition: logEventReceived|saveInDBEventReceived;sensorEventProducer
+      definition: logEventReceivedSaveInDBEventReceived;sensorEventProducer
     stream:
       kafka:
         binder:

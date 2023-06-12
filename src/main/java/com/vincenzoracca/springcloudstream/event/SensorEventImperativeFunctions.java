@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.time.Instant;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -30,11 +31,17 @@ public class SensorEventImperativeFunctions {
         return () -> new SensorEventMessage("2", Instant.now(), 30.0);
     }
 
-
     @Bean
-    public Consumer<SensorEventMessage> logEventReceivedSaveInDBEventReceived() {
+    public Function<SensorEventMessage, SensorEventMessage> logEventReceived() {
         return sensorEventMessage ->  {
             log.info("Message received: {}", sensorEventMessage);
+            return sensorEventMessage;
+        };
+    }
+
+    @Bean
+    public Consumer<SensorEventMessage> saveInDBEventReceived() {
+        return sensorEventMessage ->  {
             sensorEventDao.save(Mono.just(sensorEventMessage)).block();
         };
     }

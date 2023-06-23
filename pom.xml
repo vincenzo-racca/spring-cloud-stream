@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.vincenzoracca</groupId>
 	<artifactId>spring-cloud-stream</artifactId>
-	<version>0.0.3-SNAPSHOT</version>
+	<version>0.0.3-RC-1</version>
 	<name>spring-cloud-stream</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>

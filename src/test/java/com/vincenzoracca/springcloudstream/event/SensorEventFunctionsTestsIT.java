@@ -25,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Import(TestChannelBinderConfiguration.class)
 class SensorEventFunctionsTestsIT {
 
+
     @Autowired
     private InputDestination input;
 

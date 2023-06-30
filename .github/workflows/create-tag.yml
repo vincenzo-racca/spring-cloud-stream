@@ -17,5 +17,6 @@ jobs:
         run: |
           tag=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
           echo "Creating tag $tag"
-          git tag -a "v$tag" -m "Release $tag"
-          git push origin v$tag
+#          git tag -a "v$tag" -m "Release $tag"
+#          git push origin v$tag
+          gh release create "v$tag" --generate-notes

@@ -1,0 +1,21 @@
+name: auto_tag
+on:
+  push:
+    branches:
+      - main
+jobs:
+  tagging-release:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: setup git config
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+      - name: Create tag
+        run: |
+          tag=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "Creating tag v$tag"
+          gh release create v$tag --generate-notes

@@ -6,6 +6,7 @@ on:
 jobs:
   tagging-release:
     runs-on: ubuntu-latest
+    permissions: read-all|write-all
     env:
       GH_TOKEN: ${{ github.token }}
     steps:

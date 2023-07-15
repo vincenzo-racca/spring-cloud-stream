@@ -55,10 +55,10 @@ jobs:
           distribution: temurin
           java-version: 17
           cache: maven
-      - name: Generate image name
-        run: export IMAGE_NAME=$(./mvnw help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
       - name: Build container image
         run: |
+          export IMAGE_NAME=$(./mvnw help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
+          echo "Image Name: $IMAGE_NAME"
           chmod +x mvnw
           ./mvnw spring-boot:build-image -DskipTests \
             -Dspring-boot.build-image.imageName=${{ env.REGISTRY }}/$IMAGE_NAME:${{ env.VERSION }}

@@ -61,12 +61,12 @@ jobs:
         run: |
           chmod +x mvnw
           ./mvnw spring-boot:build-image -DskipTests \
-            -Dspring-boot.build-image.imageName=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+            -Dspring-boot.build-image.imageName=${{ env.REGISTRY }}/$IMAGE_NAME:${{ env.VERSION }}
       - name: OCI image vulnerability scanning
         uses: anchore/scan-action@v3
         id: scan
         with:
-          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+          image: ${{ env.REGISTRY }}/$IMAGE_NAME:${{ env.VERSION }}
           fail-build: false
           severity-cutoff: high
       - name: Upload vulnerability report
@@ -81,9 +81,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish container image
-        run: docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+        run: docker push ${{ env.REGISTRY }}/$IMAGE_NAME:${{ env.VERSION }}
       - name: Publish container image (latest)
         run: |
-          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }} \
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          docker tag ${{ env.REGISTRY }}/$IMAGE_NAME:${{ env.VERSION }} \
+            ${{ env.REGISTRY }}/$IMAGE_NAME:latest
+          docker push ${{ env.REGISTRY }}/$IMAGE_NAME:latest

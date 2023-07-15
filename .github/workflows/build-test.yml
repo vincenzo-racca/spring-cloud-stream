@@ -56,7 +56,7 @@ jobs:
           java-version: 17
           cache: maven
       - name: Generate image name
-        run: echo "IMAGE_NAME=$(./mvnw help:evaluate -Dexpression=project.artifactId -q -DforceStdout)" >> $GITHUB_ENV
+        run: echo "IMAGE_NAME=vincenzo-racca/$(./mvnw help:evaluate -Dexpression=project.artifactId -q -DforceStdout)" >> $GITHUB_ENV
       - name: Build container image
         run: |
           chmod +x mvnw

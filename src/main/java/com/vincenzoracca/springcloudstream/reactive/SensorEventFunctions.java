@@ -63,8 +63,8 @@ public class SensorEventFunctions {
 
 
     @PollableBean
-    public Supplier<Mono<SensorEventMessage>> sensorEventProducer() {
-        return () -> Mono.just(new SensorEventMessage("2", Instant.now(), 30.0));
+    public Supplier<Flux<SensorEventMessage>> sensorEventProducer() {
+        return () -> Flux.just(new SensorEventMessage("2", Instant.now(), 30.0));
     }
 
     // for the reactive consumers, you can use Consumer<Flux<..>> or Function<Flux<..>, Mono<Void>>

@@ -1,4 +1,4 @@
-package com.vincenzoracca.springcloudstream.event;
+package com.vincenzoracca.springcloudstream.imperative;
 
 import com.vincenzoracca.springcloudstream.dao.SensorEventDao;
 import com.vincenzoracca.springcloudstream.model.SensorEventMessage;

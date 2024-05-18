@@ -21,6 +21,10 @@ spring:
           group: ${spring.application.name}
         sensorEventProducer-out-0: #a producer
           destination: sensor_event_topic
+          producer:
+            poller: #manage polling for specific supplier producer
+              fixed-delay: 5000
+              initial-delay: 1000
         sensorEventAnotherProducer-out-0: #another producer
           destination: sensor_event_topic
         sensorEventDlqProducer-out-0: #DLQ producer

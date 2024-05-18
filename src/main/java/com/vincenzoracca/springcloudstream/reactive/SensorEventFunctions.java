@@ -1,21 +1,21 @@
-package com.vincenzoracca.springcloudstream.event;
+package com.vincenzoracca.springcloudstream.reactive;
 
 import com.vincenzoracca.springcloudstream.dao.SensorEventDao;
+import com.vincenzoracca.springcloudstream.event.DlqEventUtil;
 import com.vincenzoracca.springcloudstream.model.SensorEventMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.function.context.PollableBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.messaging.Message;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 import java.time.Instant;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 @Configuration
 @Profile("reactive")
@@ -62,18 +62,9 @@ public class SensorEventFunctions {
 
 
 
-    //    @PollableBean
-    @Bean
-    public Supplier<Flux<SensorEventMessage>> sensorEventProducer() {
-        return () -> Flux.fromStream(Stream.generate(() -> {
-            try {
-                Thread.sleep(5000);
-                return new SensorEventMessage("2", Instant.now(), 30.0);
-            } catch (Exception e) {
-                // ignore
-            }
-            return null;
-        })).subscribeOn(Schedulers.boundedElastic()).share();
+    @PollableBean
+    public Supplier<Mono<SensorEventMessage>> sensorEventProducer() {
+        return () -> Mono.just(new SensorEventMessage("2", Instant.now(), 30.0));
     }
 
     // for the reactive consumers, you can use Consumer<Flux<..>> or Function<Flux<..>, Mono<Void>>

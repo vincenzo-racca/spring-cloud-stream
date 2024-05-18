@@ -1,10 +1,10 @@
 spring:
   application:
     name: spring-cloud-stream
-  integration:
-    poller: #manage polling for supplier producer
-      fixed-delay: 5000
-      initial-delay: 1000
+#  integration:
+#    poller: #manage polling for all supplier producers
+#      fixed-delay: 5000
+#      initial-delay: 1000
   cloud:
     function:
       definition: logEventReceivedSaveInDBEventReceived;sensorEventProducer
@@ -31,5 +31,9 @@ spring:
 #            max-attempts: 3 #default is 3
         sensorEventProducer-out-0: #a producer
           destination: sensor_event_topic
+          producer:
+            poller: #manage polling for specific supplier producer
+              fixed-delay: 5000
+              initial-delay: 1000
         sensorEventAnotherProducer-out-0: #another producer
           destination: sensor_event_topic

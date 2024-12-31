@@ -22,9 +22,9 @@ public class SensorEventInMemoryDao implements SensorEventDao {
     public Mono<SensorEventMessage> save(Mono<SensorEventMessage> sensorEventMessageMono) {
         return sensorEventMessageMono
                 .doOnNext(sensorEventMessage -> log.info("Message saving: {}", sensorEventMessage))
-                .map(sensorEventMessage -> {
-                    if (sensorEventMessage.degrees() == 10.0) throw new RuntimeException("Error in saveMessage");
-                    return sensorEventMessage;
+                .flatMap(sensorEventMessage -> {
+                    if (sensorEventMessage.degrees() == 10.0) return Mono.error(new RuntimeException("Error in saveMessage"));
+                    return Mono.just(sensorEventMessage);
                 })
                 .doOnNext(sensorEventMessage -> memoryDB.put(sensorEventMessage.sensorId(), sensorEventMessage))
                 .doOnNext(sensorEventMessage -> log.info("Message saved with id: {}", sensorEventMessage.sensorId()));

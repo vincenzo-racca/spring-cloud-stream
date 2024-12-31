@@ -7,22 +7,22 @@ spring:
 #      initial-delay: 1000
   cloud:
     function:
-      definition: logEventReceivedSaveInDBEventReceived;sensorEventProducer
+      definition: logEventReceived|saveInDBEventReceived;sensorEventProducer
     stream:
-      kafka:
+      kafka: #remove spring.clod.stream.kafka props to use RabbitMQ
         binder:
           brokers: localhost:9092
-          #          kafka-properties: global props
-          #            boootstrap.server: localhost:9092
+#          kafka-properties: #global props
+#            boootstrap.server: localhost:9092
           consumerProperties: #consumer props
             max.poll.records: 250
+#          producerProperties:
+#            boootstrap.server: localhost:9092
         bindings:
           logEventReceivedSaveInDBEventReceived-in-0:
             consumer:
               enable-dlq: true
               dlq-name: sensor_event_topic_dlq
-      #          producerProperties:
-      #            boootstrap.server: localhost:9092
       bindings:
         logEventReceivedSaveInDBEventReceived-in-0: #a consumer
           destination: sensor_event_topic

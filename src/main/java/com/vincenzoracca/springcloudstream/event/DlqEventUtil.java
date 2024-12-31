@@ -3,7 +3,6 @@ package com.vincenzoracca.springcloudstream.event;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.stream.function.StreamBridge;
-import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -17,7 +16,7 @@ public class DlqEventUtil {
 
     private final StreamBridge streamBridge;
 
-    public  <T> Mono<T> handleDLQ(Message<T> message, Throwable throwable, String channel) {
+    public  <T> Mono<Void> handleDLQ(T message, Throwable throwable, String channel) {
         log.error("Error for message: {}", message, throwable);
         streamBridge.send(channel, message);
         return Mono.empty();

@@ -2,4 +2,4 @@ spring:
   application:
     name: spring-cloud-stream
   profiles:
-    active: reactive
+    active: imperative

@@ -1,4 +1,4 @@
-package com.vincenzoracca.springcloudstream.reactive;
+package com.vincenzoracca.springcloudstream.event.reactive;
 
 import com.vincenzoracca.springcloudstream.dao.SensorEventDao;
 import com.vincenzoracca.springcloudstream.event.DlqEventUtil;
@@ -9,13 +9,13 @@ import org.springframework.cloud.function.context.PollableBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.messaging.Message;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Instant;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.random.RandomGenerator;
 
 @Configuration
 @Profile("reactive")
@@ -31,16 +31,14 @@ public class SensorEventFunctions {
 
     // to manage DLQ and retry, you can wrap the flow in a flatMap
     @Bean
-    public Function<Flux<Message<SensorEventMessage>>, Mono<Void>> logEventReceivedSaveInDBEventReceived() {
+    public Function<Flux<SensorEventMessage>, Mono<Void>> logEventReceivedSaveInDBEventReceived() {
         return fluxEvent -> fluxEvent
                 .flatMap(this::consumeMessage)
                 .then();
     }
 
-    private Mono<SensorEventMessage> consumeMessage(Message<SensorEventMessage> message) {
-        return Mono.just(message)
-                .doOnNext(sensorEventMessage -> log.info("Message received: {}", sensorEventMessage))
-                .flatMap(sensorEventMessage -> sensorEventDao.save(Mono.just(sensorEventMessage.getPayload())))
+    private Mono<Void> consumeMessage(SensorEventMessage message) {
+        return logEventReceived().andThen(saveInDBEventReceived()).apply(Flux.just(message))
                 .retry(2)
                 .onErrorResume(throwable -> dlqEventUtil.handleDLQ(message, throwable, DLQ_CHANNEL));
     }
@@ -55,7 +53,6 @@ public class SensorEventFunctions {
 //    @Bean
     public Function<Flux<SensorEventMessage>, Mono<Void>> saveInDBEventReceived() {
         return fluxEvent -> fluxEvent
-                .doOnNext(sensorEventMessage -> log.info("Message saving: {}", sensorEventMessage))
                 .flatMap(sensorEventMessage -> sensorEventDao.save(Mono.just(sensorEventMessage)))
                 .then();
     }
@@ -64,7 +61,8 @@ public class SensorEventFunctions {
 
     @PollableBean
     public Supplier<Flux<SensorEventMessage>> sensorEventProducer() {
-        return () -> Flux.just(new SensorEventMessage("2", Instant.now(), 30.0));
+        final RandomGenerator random = RandomGenerator.getDefault();
+        return () -> Flux.just(new SensorEventMessage("2", Instant.now(), random.nextDouble(1.0, 31.0)));
     }
 
     // for the reactive consumers, you can use Consumer<Flux<..>> or Function<Flux<..>, Mono<Void>>

@@ -6,10 +6,10 @@ spring:
 #      definition: logEventReceived|saveInDBEventReceived;sensorEventProducer
       definition: logEventReceivedSaveInDBEventReceived;sensorEventProducer
     stream:
-      kafka:
+      kafka: #remove spring.clod.stream.kafka props to use RabbitMQ
         binder:
           brokers: localhost:9092
-#          kafka-properties: global props
+#          kafka-properties: #global props
 #            boootstrap.server: localhost:9092
           consumerProperties: #consumer props
             max.poll.records: 250

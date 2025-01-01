@@ -1,7 +1,7 @@
 package com.vincenzoracca.springcloudstream.event.imperative;
 
 import com.vincenzoracca.springcloudstream.dao.SensorEventDao;
-import com.vincenzoracca.springcloudstream.model.SensorEventMessage;
+import com.vincenzoracca.springcloudstream.model.SensorEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
@@ -28,22 +28,30 @@ public class SensorEventImperativeFunctions {
     private final SensorEventDao sensorEventDao;
 
     @Bean
-    public Supplier<SensorEventMessage> sensorEventProducer() {
+    public Supplier<SensorEvent> sensorEventProducer() {
         final RandomGenerator random = RandomGenerator.getDefault();
-        return () -> new SensorEventMessage("2", Instant.now(), random.nextDouble(1.0, 31.0));
+        return () -> new SensorEvent("2", Instant.now(), random.nextDouble(1.0, 31.0));
+    }
+
+    @Bean
+    public Function<SensorEvent, Void> logEventReceivedSaveInDBEventReceived() {
+        return logEventReceived().andThen(sensorEvent -> {
+            saveInDBEventReceived().accept(sensorEvent);
+            return null;
+        });
     }
 
 
-    @Bean
-    public Function<SensorEventMessage, SensorEventMessage> logEventReceived() {
-        return sensorEventMessage ->  {
-            log.info("Message received: {}", sensorEventMessage);
-            return sensorEventMessage;
+//    @Bean
+    public Function<SensorEvent, SensorEvent> logEventReceived() {
+        return sensorEvent ->  {
+            log.info("Message received: {}", sensorEvent);
+            return sensorEvent;
         };
     }
 
-    @Bean
-    public Consumer<SensorEventMessage> saveInDBEventReceived() {
-        return sensorEventMessage -> sensorEventDao.save(Mono.just(sensorEventMessage)).block();
+//    @Bean
+    public Consumer<SensorEvent> saveInDBEventReceived() {
+        return sensorEvent -> sensorEventDao.save(Mono.just(sensorEvent)).block();
     }
 }

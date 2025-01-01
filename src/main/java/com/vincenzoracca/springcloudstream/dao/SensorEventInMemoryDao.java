@@ -1,6 +1,6 @@
 package com.vincenzoracca.springcloudstream.dao;
 
-import com.vincenzoracca.springcloudstream.model.SensorEventMessage;
+import com.vincenzoracca.springcloudstream.model.SensorEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
@@ -12,22 +12,22 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class SensorEventInMemoryDao implements SensorEventDao {
 
-    private final ConcurrentHashMap<String, SensorEventMessage> memoryDB = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, SensorEvent> memoryDB = new ConcurrentHashMap<>();
 
 
-    public Flux<SensorEventMessage> findAll() {
+    public Flux<SensorEvent> findAll() {
         return Flux.fromIterable(memoryDB.values());
     }
 
-    public Mono<SensorEventMessage> save(Mono<SensorEventMessage> sensorEventMessageMono) {
-        return sensorEventMessageMono
-                .doOnNext(sensorEventMessage -> log.info("Message saving: {}", sensorEventMessage))
-                .flatMap(sensorEventMessage -> {
-                    if (sensorEventMessage.degrees() == 10.0) return Mono.error(new RuntimeException("Error in saveMessage"));
-                    return Mono.just(sensorEventMessage);
+    public Mono<SensorEvent> save(Mono<SensorEvent> sensorEventMono) {
+        return sensorEventMono
+                .doOnNext(sensorEvent -> log.info("Message saving: {}", sensorEvent))
+                .flatMap(sensorEvent -> {
+                    if (sensorEvent.degrees() == 10.0) return Mono.error(new RuntimeException("Error in saveMessage"));
+                    return Mono.just(sensorEvent);
                 })
-                .doOnNext(sensorEventMessage -> memoryDB.put(sensorEventMessage.sensorId(), sensorEventMessage))
-                .doOnNext(sensorEventMessage -> log.info("Message saved with id: {}", sensorEventMessage.sensorId()));
+                .doOnNext(sensorEvent -> memoryDB.put(sensorEvent.sensorId(), sensorEvent))
+                .doOnNext(sensorEvent -> log.info("Message saved with id: {}", sensorEvent.sensorId()));
     }
 
 }

@@ -9,26 +9,36 @@ You can switch Kafka, RabbitMQ, AWS Kinesis and others, but you will not need to
 
 ## About the project
 
-In this project I show you the Spring Cloud Stream with Kafka. \
-In the project there is an example of consumer and two examples of produces (both in imperative way and reactive way). \
-In the SensorEventFunctions class, I show you Spring Cloud Stream in reactive mode,
-in the SensorEventImperativeFunctions, I show you the same flow in the imperative mode.
+This project is related to the tutorial: [Broker agnostic with Spring Cloud Stream](https://www.vincenzoracca.com/en/blog/framework/spring/cloud-stream/). \
+This project shows how to use Spring Cloud Stream with Apache Kafka. Also:
+- Shows how to advanced configure error handling with retry and DLQ.
+- Shows how to use Spring Cloud Stream also with WebFlux (reactive mode).
+- Shows how to switch the broker used by Kafka to RabbitMQ without changing the source code.
 
-
+## Prerequisites
+- Docker or Podman active
+- Java 21
+- 
 ## Run the project
 
 There is a `docker-compose.yml` file in the root of project to run Zookeeper and Kafka containers. \
 With Spring Boot 3.1, we have the docker compose support out of box (adding the **spring-boot-docker-compose** dependency).
-So, you can just run the application with your IDE or with command: `./mvnw spring-boot:run`, and Spring will execute
-the docker compose in docker-compose.yml file and then the application.
+So, you can just run the application with your IDE or with command: 
+```shell
+./mvnw clean spring-boot:run
+```
+and Spring will execute the docker compose in docker-compose.yml file and then the application.
 
-There is an automatic producer that send the date every 5 seconds (the sensorEventAnotherProducer producer).
+There is an automatic producer that send the date every n seconds (the sensorEventAnotherProducer producer).
 
 
 ## Profiles in the project
 
 The project works both imperative and reactive mode, by the spring profiles (**reactive** and **imperative**). \
-The default mode is reactive, but you can replace the profile in _application.yml_.
+The default mode is imperative, but you can replace the profile in _application.yml_ or with the command:
+```shell
+./mvnw clean spring-boot:run -Dspring-boot.run.profiles=reactive
+```
 
 ## DLQ and Retries
 

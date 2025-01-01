@@ -7,7 +7,8 @@ spring:
 #      initial-delay: 1000
   cloud:
     function:
-      definition: logEventReceived|saveInDBEventReceived;sensorEventProducer
+#      definition: logEventReceived|saveInDBEventReceived;sensorEventProducer # DLQ does not work with compound functions
+      definition: logEventReceivedSaveInDBEventReceived;sensorEventProducer
     stream:
       kafka: #remove spring.clod.stream.kafka props to use RabbitMQ
         binder:
@@ -27,8 +28,11 @@ spring:
         logEventReceivedSaveInDBEventReceived-in-0: #a consumer
           destination: sensor_event_topic
           group: ${spring.application.name}
-#          consumer:
-#            max-attempts: 3 #default is 3
+          consumer:
+            max-attempts: 3
+            retryable-exceptions:
+              java.lang.RuntimeException: true
+              java.lang.IllegalArgumentException: false #not retryable
         sensorEventProducer-out-0: #a producer
           destination: sensor_event_topic
           producer:

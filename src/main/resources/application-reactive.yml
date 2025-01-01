@@ -3,7 +3,7 @@ spring:
     name: spring-cloud-stream
   cloud:
     function:
-#      definition: logEventReceived|saveInDBEventReceived;sensorEventProducer
+#      definition: logEventReceived|saveInDBEventReceived;sensorEventProducer # DLQ does not work with compound functions
       definition: logEventReceivedSaveInDBEventReceived;sensorEventProducer
     stream:
       kafka: #remove spring.clod.stream.kafka props to use RabbitMQ
